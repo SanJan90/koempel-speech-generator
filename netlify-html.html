@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roda JC – De Koempels Spreekt</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --geel: #FFD700;
+    --geel-donker: #E6C200;
+    --zwart: #0A0A0A;
+    --zwart-mid: #1A1A1A;
+    --zwart-licht: #2A2A2A;
+    --grijs: #888;
+    --wit: #F5F5F0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--zwart); color: var(--wit); font-family: 'Barlow', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  .bg-pattern { position: fixed; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(255,215,0,0.02) 60px, rgba(255,215,0,0.02) 61px); pointer-events: none; z-index: 0; }
+  .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+  .header { text-align: center; margin-bottom: 60px; animation: fadeDown 0.6s ease both; }
+  .badge { display: inline-block; background: var(--geel); color: var(--zwart); font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; padding: 6px 14px; margin-bottom: 20px; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 120px); line-height: 0.9; letter-spacing: 2px; color: var(--wit); }
+  h1 span { color: var(--geel); display: block; }
+  .subtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 18px; color: var(--grijs); letter-spacing: 2px; text-transform: uppercase; margin-top: 16px; }
+  .vergelijking { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 60px; animation: fadeUp 0.6s 0.2s ease both; }
+  @media (max-width: 640px) { .vergelijking { grid-template-columns: 1fr; } }
+  .prompt-blok { padding: 32px; position: relative; }
+  .prompt-blok.voor { background: var(--zwart-mid); border: 1px solid #333; border-right: none; }
+  .prompt-blok.na { background: var(--zwart-licht); border: 1px solid var(--geel); border-left: 2px solid var(--geel); }
+  .prompt-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+  .prompt-blok.voor .prompt-label { color: var(--grijs); }
+  .prompt-blok.na .prompt-label { color: var(--geel); }
+  .prompt-tekst { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 600; color: var(--wit); line-height: 1.5; background: rgba(0,0,0,0.4); border-left: 3px solid #444; padding: 14px 16px; margin-bottom: 20px; }
+  .prompt-blok.na .prompt-tekst { border-left-color: var(--geel); }
+  .prompt-onderdelen { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .onderdeel { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; }
+  .onderdeel-tag { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; background: var(--geel); color: var(--zwart); padding: 2px 8px; white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
+  .onderdeel-tekst { color: #ccc; }
+  .output-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--grijs); margin-bottom: 8px; }
+  .output-box { background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 16px; font-size: 14px; line-height: 1.6; color: #aaa; font-style: italic; min-height: 80px; }
+  .prompt-blok.na .output-box { border-color: rgba(255,215,0,0.2); color: var(--wit); }
+  .generator { background: var(--zwart-mid); border: 1px solid #333; border-top: 3px solid var(--geel); padding: 40px; animation: fadeUp 0.6s 0.4s ease both; }
+  .generator-title { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--wit); margin-bottom: 8px; }
+  .generator-title span { color: var(--geel); }
+  .generator-sub { color: var(--grijs); font-size: 14px; margin-bottom: 32px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--geel); }
+  select, input { background: var(--zwart-licht); border: 1px solid #444; color: var(--wit); padding: 12px 14px; font-family: 'Barlow', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; appearance: none; -webkit-appearance: none; }
+  select:focus, input:focus { border-color: var(--geel); }
+  .btn { width: 100%; background: var(--geel); color: var(--zwart); border: none; padding: 18px 32px; font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; cursor: pointer; transition: background 0.15s, transform 0.1s; margin-top: 8px; }
+  .btn:hover { background: var(--geel-donker); }
+  .btn:active { transform: scale(0.99); }
+  .btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+  .result-area { margin-top: 32px; display: none; }
+  .result-area.zichtbaar { display: block; }
+  .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .result-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--geel); }
+  .result-lijn { flex: 1; height: 1px; background: linear-gradient(to right, var(--geel), transparent); }
+  .result-box { background: var(--zwart); border: 1px solid rgba(255,215,0,0.3); padding: 28px; font-size: 16px; line-height: 1.8; color: var(--wit); min-height: 120px; }
+  .loading { display: flex; gap: 6px; align-items: center; color: var(--grijs); font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 1px; }
+  .dot { width: 8px; height: 8px; background: var(--geel); border-radius: 50%; animation: pulse 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  .generated-prompt { margin-top: 16px; background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.15); padding: 16px; }
+  .generated-prompt-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--grijs); margin-bottom: 8px; }
+  .generated-prompt-tekst { font-size: 13px; color: #999; line-height: 1.6; font-style: italic; }
+  .footer { text-align: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid #222; color: #444; font-size: 12px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; animation: fadeUp 0.6s 0.6s ease both; }
+  .footer span { color: var(--geel); }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } }
+  .divider { display: flex; align-items: center; justify-content: center; margin-bottom: 60px; gap: 16px; animation: fadeUp 0.6s 0.15s ease both; }
+  .divider-line { flex: 1; height: 1px; background: #222; }
+  .divider-icon { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--geel); letter-spacing: 4px; }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="container">
+  <div class="header">
+    <div class="badge">⚽ De Kracht van de Prompt</div>
+    <h1>RODA JC<span>KOEMPEL</span>GENERATOR</h1>
+    <p class="subtitle">Wat doet Rol · Taak · Context met je AI-output?</p>
+  </div>
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-icon">VS</div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="vergelijking">
+    <div class="prompt-blok voor">
+      <div class="prompt-label">❌ Simpele prompt</div>
+      <div class="prompt-tekst">"Schrijf een motivatietekst voor Roda JC."</div>
+      <div class="output-label">Wat je krijgt</div>
+      <div class="output-box">"Roda JC is een geweldige club met een rijke historie. De spelers geven altijd alles op het veld. Samen kunnen we het seizoen succesvol afsluiten. Kom op Roda!"</div>
+    </div>
+    <div class="prompt-blok na">
+      <div class="prompt-label">✅ Met rol · taak · context</div>
+      <div class="prompt-tekst">"Je bent José Mourinho. Schrijf een motivatietoespraak van 5 zinnen voor de Roda JC-spelers vlak voor de derby tegen MVV..."</div>
+      <div class="prompt-onderdelen">
+        <div class="onderdeel"><span class="onderdeel-tag">Rol</span><span class="onderdeel-tekst">José Mourinho</span></div>
+        <div class="onderdeel"><span class="onderdeel-tag">Taak</span><span class="onderdeel-tekst">Motivatietoespraak van 5 zinnen</span></div>
+        <div class="onderdeel"><span class="onderdeel-tag">Context</span><span class="onderdeel-tekst">Derby vs MVV · uitverkocht stadion · laatste plek · trainer op het spel</span></div>
+      </div>
+      <div class="output-label">Wat je krijgt</div>
+      <div class="output-box">"Ik heb kampioenen gecoacht, maar vandaag is het niet de vraag wie de beste is — het is de vraag wie zijn hart laat zien..."</div>
+    </div>
+  </div>
+
+  <div class="generator">
+    <div class="generator-title">MAAK JE EIGEN <span>KOEMPEL</span>SPEECH</div>
+    <div class="generator-sub">Pas de rol, taak en context aan — en zie het verschil live</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Rol — wie spreekt?</label>
+        <select id="rol">
+          <option value="José Mourinho">José Mourinho</option>
+          <option value="een Limburgse mijnwerker die ook voetbalfan is">Limburgse mijnwerker</option>
+          <option value="een dramaleerkracht die overdreven spreekt">Dramaleerkracht</option>
+          <option value="een nuchtere Nederlandse voetbaltrainer">Nuchtere Nederlandse trainer</option>
+          <option value="een generaal die zijn leger toespreekt">Generaal</option>
+          <option value="een kleuterjuf">Kleuterjuf</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tegenstander</label>
+        <select id="tegenstander">
+          <option value="MVV Maastricht">MVV Maastricht</option>
+          <option value="NAC Breda">NAC Breda</option>
+          <option value="De Graafschap">De Graafschap</option>
+          <option value="FC Eindhoven">FC Eindhoven</option>
+          <option value="Jong Ajax">Jong Ajax</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Stand in competitie</label>
+        <select id="stand">
+          <option value="laatste in de Keuken Kampioen Divisie">Laatste plek 😰</option>
+          <option value="derde van onderaf in de Keuken Kampioen Divisie">Degradatiezone</option>
+          <option value="vijfde, net buiten de play-offs">Net naast play-offs</option>
+          <option value="tweede, op weg naar de Eredivisie">Tweede plek 🔥</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Inzet</label>
+        <select id="inzet">
+          <option value="de trainer wordt ontslagen bij verlies">Trainer ontslagen bij verlies</option>
+          <option value="promotie naar de Eredivisie is haalbaar bij winst">Promotie bij winst</option>
+          <option value="het is de 60e verjaardag van de club">60e verjaardag club</option>
+          <option value="de beste speler heeft net aangegeven te vertrekken">Sterspeler vertrekt</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Lengte</label>
+        <select id="lengte">
+          <option value="maximaal 60 woorden">Kort (60 woorden)</option>
+          <option value="maximaal 100 woorden">Middel (100 woorden)</option>
+          <option value="maximaal 150 woorden">Lang (150 woorden)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Toon</label>
+        <select id="toon">
+          <option value="">Automatisch</option>
+          <option value="dramatisch en emotioneel">Dramatisch</option>
+          <option value="nuchter en direct">Nuchter</option>
+          <option value="grappig maar motiverend">Grappig</option>
+          <option value="poëtisch en inspirerend">Poëtisch</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" id="genereerBtn" onclick="genereer()">⚡ GENEREER DE KOEMPELSPEECH</button>
+    <div class="result-area" id="resultArea">
+      <div class="result-header">
+        <div class="result-label">Output</div>
+        <div class="result-lijn"></div>
+      </div>
+      <div class="result-box" id="resultBox">
+        <div class="loading" id="loading">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          <span id="loadingTekst">&nbsp;Even geduld...</span>
+        </div>
+        <div id="resultTekst" style="display:none"></div>
+      </div>
+      <div class="generated-prompt" id="promptPreview" style="display:none">
+        <div class="generated-prompt-label">Gebruikte prompt</div>
+        <div class="generated-prompt-tekst" id="promptTekst"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Gebouwd met Claude · <span>Modern-Day AI Training & Consulting</span> · Prompt Engineering Demo
+  </div>
+</div>
+
+<script>
+async function genereer() {
+  const btn = document.getElementById('genereerBtn');
+  const resultArea = document.getElementById('resultArea');
+  const loading = document.getElementById('loading');
+  const resultTekst = document.getElementById('resultTekst');
+  const promptPreview = document.getElementById('promptPreview');
+  const promptTekstEl = document.getElementById('promptTekst');
+
+  const rolSelect = document.getElementById('rol');
+  const rolLabel = rolSelect.options[rolSelect.selectedIndex].text;
+  document.getElementById('loadingTekst').textContent = `\u00a0${rolLabel} denkt na...`;
+
+  const rol = rolSelect.value;
+  const tegenstander = document.getElementById('tegenstander').value;
+  const stand = document.getElementById('stand').value;
+  const inzet = document.getElementById('inzet').value;
+  const lengte = document.getElementById('lengte').value;
+  const toon = document.getElementById('toon').value;
+  const toonZin = toon ? ` De toon is ${toon}.` : '';
+
+  const prompt = `Je bent ${rol}. Schrijf een motivatietoespraak van ${lengte} voor de Roda JC-spelers vlak voor de derby tegen ${tegenstander}. Het stadion is uitverkocht, Roda staat ${stand}, en ${inzet}.${toonZin} Schrijf direct de toespraak, zonder inleiding of uitleg.`;
+  promptTekstEl.textContent = `"${prompt}"`;
+
+  btn.disabled = true;
+  resultArea.classList.add('zichtbaar');
+  loading.style.display = 'flex';
+  resultTekst.style.display = 'none';
+  promptPreview.style.display = 'none';
+
+  try {
+    const response = await fetch('/.netlify/functions/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await response.json();
+    const tekst = data.content?.[0]?.text || 'Er ging iets mis. Probeer opnieuw.';
+
+    loading.style.display = 'none';
+    resultTekst.style.display = 'block';
+    resultTekst.textContent = tekst;
+    promptPreview.style.display = 'block';
+  } catch (err) {
+    loading.style.display = 'none';
+    resultTekst.style.display = 'block';
+    resultTekst.textContent = 'Verbindingsfout. Controleer de API-verbinding.';
+  }
+
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
